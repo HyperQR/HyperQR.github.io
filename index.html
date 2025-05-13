@@ -22,6 +22,7 @@
             --maths-color: #f1c40f;
             --geography-color: #27ae60;
             --media-color: #e84393;
+            --completed-overlay: rgba(0, 0, 0, 0.6);
         }
         
         * {
@@ -121,6 +122,7 @@
             box-shadow: var(--card-shadow);
             overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
         }
         
         .exam-card:hover {
@@ -329,6 +331,7 @@
             font-size: 0.7rem;
             font-weight: bold;
             transform: rotate(10deg);
+            z-index: 2;
         }
         
         .legend {
@@ -372,6 +375,101 @@
                 border-radius: 4px;
             }
         }
+        
+        /* New styles for completed exams */
+        .completed {
+            position: relative;
+            opacity: 0.8;
+        }
+        
+        .completed::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--completed-overlay);
+            opacity: 0.15;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .completed::after {
+            content: 'COMPLETED';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            background-color: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            z-index: 2;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Status counter styles */
+        .status-counters {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        
+        .status-counter {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .completed-counter {
+            background-color: #28a745;
+        }
+        
+        .upcoming-counter {
+            background-color: #007bff;
+        }
+        
+        .counter-value {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .counter-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        
+        /* Show hide completed button */
+        .toggle-completed-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        
+        .toggle-completed-btn:hover {
+            background-color: #133b53;
+        }
+        
+        @media (min-width: 768px) {
+            .toggle-completed-btn {
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -384,6 +482,19 @@
         <div class="countdown" id="countdown">
             Next exam: Loading...
         </div>
+        
+        <div class="status-counters">
+            <div class="status-counter completed-counter">
+                <div class="counter-value" id="completed-count">0</div>
+                <div class="counter-label">Completed</div>
+            </div>
+            <div class="status-counter upcoming-counter">
+                <div class="counter-value" id="upcoming-count">0</div>
+                <div class="counter-label">Upcoming</div>
+            </div>
+        </div>
+        
+        <button class="toggle-completed-btn" id="toggle-completed-btn">Show/Hide Completed Exams</button>
         
         <div class="filter-options">
             <h3>Filter by:</h3>
@@ -409,6 +520,10 @@
             <div class="legend-item">
                 <div class="color-box" style="background-color: #2ecc71;"></div>
                 <span>Room M007</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background-color: #28a745;"></div>
+                <span>Completed</span>
             </div>
         </div>
         
@@ -582,155 +697,4 @@
             },
             {
                 date: "2025-06-12T08:45:00",
-                day: "Thu, 12th Jun",
-                time: "8:45AM",
-                subject: "Geography",
-                exam: "Paper 3",
-                room: "M007",
-                seat: "E9",
-                duration: "1h30m",
-                category: "Geography"
-            },
-            {
-                date: "2025-06-13T08:45:00",
-                day: "Fri, 13th Jun",
-                time: "8:45AM",
-                subject: "Combined Sci: Trilogy",
-                exam: "Chemistry P2f",
-                room: "M003",
-                seat: "F5",
-                duration: "1h15m",
-                category: "Science"
-            },
-            {
-                date: "2025-06-16T08:45:00",
-                day: "Mon, 16th Jun",
-                time: "8:45AM",
-                subject: "Combined Sci: Trilogy",
-                exam: "Physics P2f",
-                room: "M003",
-                seat: "F5",
-                duration: "1h15m",
-                category: "Science"
-            }
-        ];
-        
-        // Function to generate card HTML
-        function createExamCard(exam) {
-            const today = new Date().toISOString().split('T')[0];
-            const isToday = exam.date.startsWith(today);
-            const todayClass = isToday ? 'today' : '';
-            
-            return `
-                <div class="exam-card ${exam.category} room-${exam.room} ${todayClass}" data-date="${exam.date}" data-category="${exam.category}">
-                    <div class="card-header">
-                        <div class="card-date">${exam.day}</div>
-                        <div class="card-time">${exam.time}</div>
-                    </div>
-                    <div class="card-subject">${exam.subject}</div>
-                    <div class="card-details">
-                        <div class="card-detail-row">
-                            <span class="detail-label">Exam:</span>
-                            <span class="detail-value">${exam.exam}</span>
-                        </div>
-                        <div class="card-detail-row">
-                            <span class="detail-label">Room:</span>
-                            <span class="detail-value">${exam.room}</span>
-                        </div>
-                        <div class="card-detail-row">
-                            <span class="detail-label">Seat:</span>
-                            <span class="detail-value">${exam.seat}</span>
-                        </div>
-                        <div class="card-detail-row">
-                            <span class="detail-label">Duration:</span>
-                            <span class="detail-value">${exam.duration}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Populate exam cards
-        function populateExams() {
-            const mayContainer = document.getElementById('may-exams');
-            const juneContainer = document.getElementById('june-exams');
-            
-            mayContainer.innerHTML = '';
-            juneContainer.innerHTML = '';
-            
-            examData.forEach(exam => {
-                const card = createExamCard(exam);
-                if (exam.date.includes('-05-')) {
-                    mayContainer.innerHTML += card;
-                } else if (exam.date.includes('-06-')) {
-                    juneContainer.innerHTML += card;
-                }
-            });
-        }
-        
-        // Call initially
-        populateExams();
-        
-        // Function to filter exams
-        function filterExams(category) {
-            // Update active button
-            document.querySelectorAll('.filter-button').forEach(button => {
-                button.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Show all exams first
-            document.querySelectorAll('.exam-card').forEach(card => {
-                card.style.display = '';
-            });
-            
-            // Then hide non-matching cards if not "all"
-            if (category !== 'all') {
-                document.querySelectorAll(`.exam-card:not(.${category})`).forEach(card => {
-                    card.style.display = 'none';
-                });
-            }
-        }
-        
-        // Function to update countdown
-        function updateCountdown() {
-            const now = new Date();
-            let nextExam = null;
-            let smallestDiff = Infinity;
-            
-            examData.forEach(exam => {
-                const examDate = new Date(exam.date);
-                if (examDate > now) {
-                    const diff = examDate - now;
-                    if (diff < smallestDiff) {
-                        smallestDiff = diff;
-                        nextExam = {
-                            date: examDate,
-                            subject: exam.subject,
-                            exam: exam.exam
-                        };
-                    }
-                }
-            });
-            
-            const countdownElement = document.getElementById('countdown');
-            
-            if (nextExam) {
-                const days = Math.floor(smallestDiff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((smallestDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((smallestDiff % (1000 * 60 * 60)) / (1000 * 60));
-                
-                countdownElement.innerHTML = `Next exam: <strong>${nextExam.subject}</strong><br>${nextExam.exam}: ${days}d ${hours}h ${minutes}m`;
-            } else {
-                countdownElement.innerHTML = 'All exams completed!';
-            }
-        }
-        
-        // Initialize countdown
-        updateCountdown();
-        
-        // Update countdown every minute
-        setInterval(updateCountdown, 60000);
-    </script>
-</body>
-</html>
+           
