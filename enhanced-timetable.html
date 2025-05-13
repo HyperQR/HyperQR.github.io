@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE Exam Timetable 2025</title>
+    <style>
+        :root {
+            --primary-color: #1a5276;
+            --secondary-color: #2980b9;
+            --light-bg: #f5f5f5;
+            --white: #ffffff;
+            --border-color: #ddd;
+            --hover-bg: #f5f5f5;
+            --room-m001: #e74c3c;
+            --room-m003: #3498db;
+            --room-m007: #2ecc71;
+            --today-highlight: #ffeaa7;
+            --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --english-color: #e67e22;
+            --science-color: #9b59b6;
+            --maths-color: #f1c40f;
+            --geography-color: #27ae60;
+            --media-color: #e84393;
+            --completed-overlay: rgba(0, 0, 0, 0.6);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: var(--light-bg);
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 15px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        header p {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+                max-width: 1200px;
+            }
+            
+            header {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+        }
+        
+        .container {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 12px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        /* New Card-Based Layout */
+        .exams-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        @media (min-width: 640px) {
+            .exams-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .exams-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .exam-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        
+        .exam-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            padding: 12px;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .English .card-header {
+            background-color: var(--english-color);
+        }
+        
+        .Science .card-header {
+            background-color: var(--science-color);
+        }
+        
+        .Mathematics .card-header {
+            background-color: var(--maths-color);
+        }
+        
+        .Geography .card-header {
+            background-color: var(--geography-color);
+        }
+        
+        .Media .card-header {
+            background-color: var(--media-color);
+        }
+        
+        .card-date {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        
+        .card-time {
+            font-size: 0.9rem;
+        }
+        
+        .card-subject {
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 12px 12px 5px;
+        }
+        
+        .card-details {
+            padding: 0 12px 12px;
+        }
+        
+        .card-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+        
+        .card-detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            font-weight: 500;
+        }
+        
+        .room-indicator {
+            width: 5px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+        
+        .room-M001 .room-indicator {
+            background-color: var(--room-m001);
+        }
+        
+        .room-M003 .room-indicator {
+            background-color: var(--room-m003);
+        }
+        
+        .room-M007 .room-indicator {
+            background-color: var(--room-m007);
+        }
+        
+        .month-header {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            padding: 8px 12px;
+            font-weight: bold;
+            border-radius: 5px;
+            margin: 15px 0 10px 0;
+            font-size: 1.1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .month-header {
+                padding: 10px 15px;
+                margin: 20px 0 15px 0;
+                font-size: 1.4rem;
+            }
+        }
+        
+        .filter-options {
+            margin-bottom: 15px;
+        }
+        
+        .filter-options h3 {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .filter-button {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 0.8rem;
+            flex: 1 1 auto;
+            max-width: calc(50% - 5px); /* 2 buttons per row on very small screens */
+            text-align: center;
+        }
+        
+        .filter-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .filter-button.active {
+            background-color: var(--primary-color);
+        }
+        
+        @media (min-width: 480px) {
+            .filter-button {
+                max-width: calc(33.333% - 5px); /* 3 buttons per row on slightly larger screens */
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .filter-options h3 {
+                font-size: 1rem;
+            }
+            
+            .filter-buttons {
+                gap: 8px;
+            }
+            
+            .filter-button {
+                padding: 8px 16px;
+                font-size: 1rem;
+                max-width: none;
+            }
+        }
+        
+        .countdown {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        @media (min-width: 768px) {
+            .countdown {
+                padding: 15px;
+                margin-bottom: 20px;
+                font-size: 1.2rem;
+            }
+        }
+        
+        .today {
+            position: relative;
+        }
+        
+        .today::after {
+            content: 'TODAY';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff4757;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transform: rotate(10deg);
+            z-index: 2;
+        }
+        
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        @media (min-width: 768px) {
+            .legend {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                margin-top: 15px;
+            }
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+        }
+        
+        .color-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        
+        @media (min-width: 768px) {
+            .legend-item {
+                font-size: 1rem;
+            }
+            
+            .color-box {
+                width: 20px;
+                height: 20px;
+                border-radius: 4px;
+            }
+        }
+        
+        /* New styles for completed exams */
+        .completed {
+            position: relative;
+            opacity: 0.8;
+        }
+        
+        .completed::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--completed-overlay);
+            opacity: 0.15;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .completed::after {
+            content: 'COMPLETED';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            background-color: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            z-index: 2;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Status counter styles */
+        .status-counters {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        
+        .status-counter {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .completed-counter {
+            background-color: #28a745;
+        }
+        
+        .upcoming-counter {
+            background-color: #007bff;
+        }
+        
+        .counter-value {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .counter-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        
+        /* Show hide completed button */
+        .toggle-completed-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        
+        .toggle-completed-btn:hover {
+            background-color: #133b53;
+        }
+        
+        @media (min-width: 768px) {
+            .toggle-completed-btn {
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>GCSE Exam Timetable</h1>
+        <p>2025 Examination Schedule</p>
+    </header>
+    
+    <div class="container">
+        <div class="countdown" id="countdown">
+            Next exam: Loading...
+        </div>
+        
+        <div class="status-counters">
+            <div class="status-counter completed-counter">
+                <div class="counter-value" id="completed-count">0</div>
+                <div class="counter-label">Completed</div>
+            </div>
+            <div class="status-counter upcoming-counter">
+                <div class="counter-value" id="upcoming-count">0</div>
+                <div class="counter-label">Upcoming</div>
+            </div>
+        </div>
+        
+        <button class="toggle-completed-btn" id="toggle-completed-btn">Show/Hide Completed Exams</button>
+        
+        <div class="filter-options">
+            <h3>Filter by:</h3>
+            <div class="filter-buttons">
+                <button class="filter-button active" onclick="filterExams('all')">All</button>
+                <button class="filter-button" onclick="filterExams('English')">English</button>
+                <button class="filter-button" onclick="filterExams('Science')">Science</button>
+                <button class="filter-button" onclick="filterExams('Mathematics')">Maths</button>
+                <button class="filter-button" onclick="filterExams('Geography')">Geography</button>
+                <button class="filter-button" onclick="filterExams('Media')">Media</button>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="color-box" style="background-color: #e74c3c;"></div>
+                <span>Room M001</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background-color: #3498db;"></div>
+                <span>Room M003</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background-color: #2ecc71;"></div>
+                <span>Room M007</span>
+            </div>
+            <div class="legend-item">
+                <div class="color-box" style="background-color: #28a745;"></div>
+                <span>Completed</span>
+            </div>
+        </div>
+        
+        <h2 class="month-header">May 2025</h2>
+        <div class="exams-container" id="may-exams">
+            <!-- May exam cards will be generated by JavaScript -->
+        </div>
+        
+        <h2 class="month-header">June 2025</h2>
+        <div class="exams-container" id="june-exams">
+            <!-- June exam cards will be generated by JavaScript -->
+        </div>
+    </div>
+    
+    <script>
+        // Exam data
+        const examData = [
+            {
+                date: "2025-05-12T08:45:00",
+                day: "Mon, 12th May",
+                time: "8:45AM",
+                subject: "English Literature",
+                exam: "Paper 1",
+                room: "M001",
+                seat: "A3",
+                duration: "1h45m",
+                category: "English"
+            },
+            {
+                date: "2025-05-13T13:45:00",
+                day: "Tue, 13th May",
+                time: "1:45PM",
+                subject: "Combined Sci: Trilogy",
+                exam: "Biology P1f",
+                room: "M003",
+                seat: "F5",
+                duration: "1h15m",
+                category: "Science"
+            },
+            {
+                date: "2025-05-14T08:45:00",
+                day: "Wed, 14th May",
+                time: "8:45AM",
+                subject: "Geography",
+                exam: "Paper 1",
+                room: "M007",
+                seat: "E9",
+                duration: "1h30m",
+                category: "Geography"
+            },
+            {
+                date: "2025-05-15T08:45:00",
+                day: "Thu, 15th May",
+                time: "8:45AM",
+                subject: "Mathematics Option F",
+                exam: "Non Calculator",
+                room: "M007",
+                seat: "F8",
+                duration: "1h30m",
+                category: "Mathematics"
+            },
+            {
+                date: "2025-05-19T08:45:00",
+                day: "Mon, 19th May",
+                time: "8:45AM",
+                subject: "Combined Sci: Trilogy",
+                exam: "Chemistry P1f",
+                room: "M003",
+                seat: "F5",
+                duration: "1h15m",
+                category: "Science"
+            },
+            {
+                date: "2025-05-20T08:45:00",
+                day: "Tue, 20th May",
+                time: "8:45AM",
+                subject: "English Literature",
+                exam: "Paper 2",
+                room: "M001",
+                seat: "A3",
+                duration: "2h15m",
+                category: "English"
+            },
+            {
+                date: "2025-05-22T08:45:00",
+                day: "Thu, 22nd May",
+                time: "8:45AM",
+                subject: "Combined Sci: Trilogy",
+                exam: "Physics P1f",
+                room: "M003",
+                seat: "F5",
+                duration: "1h15m",
+                category: "Science"
+            },
+            {
+                date: "2025-05-23T08:45:00",
+                day: "Fri, 23rd May",
+                time: "8:45AM",
+                subject: "English Language",
+                exam: "Paper 1",
+                room: "M001",
+                seat: "A3",
+                duration: "1h45m",
+                category: "English"
+            },
+            {
+                date: "2025-06-04T08:45:00",
+                day: "Wed, 4th Jun",
+                time: "8:45AM",
+                subject: "Mathematics Option F",
+                exam: "Calculator",
+                room: "M007",
+                seat: "F8",
+                duration: "1h30m",
+                category: "Mathematics"
+            },
+            {
+                date: "2025-06-06T08:45:00",
+                day: "Fri, 6th Jun",
+                time: "8:45AM",
+                subject: "English Language",
+                exam: "Paper 2",
+                room: "M001",
+                seat: "A3",
+                duration: "1h45m",
+                category: "English"
+            },
+            {
+                date: "2025-06-06T13:45:00",
+                day: "Fri, 6th Jun",
+                time: "1:45PM",
+                subject: "Geography",
+                exam: "Paper 2",
+                room: "M007",
+                seat: "E6",
+                duration: "1h30m",
+                category: "Geography"
+            },
+            {
+                date: "2025-06-09T08:45:00",
+                day: "Mon, 9th Jun",
+                time: "8:45AM",
+                subject: "Combined Sci: Trilogy",
+                exam: "Biology P2f",
+                room: "M003",
+                seat: "F5",
+                duration: "1h15m",
+                category: "Science"
+            },
+            {
+                date: "2025-06-09T13:45:00",
+                day: "Mon, 9th Jun",
+                time: "1:45PM",
+                subject: "Creative Media",
+                exam: "Media Industry",
+                room: "M003",
+                seat: "G5",
+                duration: "1h30m",
+                category: "Media"
+            },
+            {
+                date: "2025-06-11T08:45:00",
+                day: "Wed, 11th Jun",
+                time: "8:45AM",
+                subject: "Mathematics Option F",
+                exam: "Calculator",
+                room: "M007",
+                seat: "F8",
+                duration: "1h30m",
+                category: "Mathematics"
+            },
+            {
+                date: "2025-06-12T08:45:00",
+                day: "Thu, 12th Jun",
+                time: "8:45AM",
+                subject: "Geography",
+                exam: "Paper 3",
+                room: "M007",
+                seat: "E9",
+                duration: "1h30m",
+                category: "Geography"
+            },
+            {
+                date: "2025-06-13T08:45:00",
+                day: "Fri, 13th Jun",
+                time: "8:45AM",
+                subject: "Combined Sci: Trilogy",
+                exam: "Chemistry P2f",
+                room: "M003",
+                seat: "F5",
+                duration: "1h15m",
+                category: "Science"
+            },
+            {
+                date: "2025-06-16T08:45:00",
+                day: "Mon, 16th Jun",
+                time: "8:45AM",
+                subject: "Combined Sci: Trilogy",
+                exam: "Physics P2f",
+                room: "M003",
+                seat: "F5",
+                duration: "1h15m",
+                category: "Science"
+            }
+        ];
+        
+        // Set current date for testing - in real use, remove the line below and use actual current date
+        const currentDate = new Date(); // Real current date
+        //const currentDate = new Date('2025-05-13T14:00:00'); // Set to May 13th, 2025 at 2pm (after today's exam)
+        
+        // Function to generate card HTML
+        function createExamCard(exam) {
+            const examDate = new Date(exam.date);
+            const isToday = examDate.toDateString() === currentDate.toDateString();
+            const isPast = examDate < currentDate;
+            const todayClass = isToday ? 'today' : '';
+            const completedClass = isPast ? 'completed' : '';
+            
+            return `
+                <div class="exam-card ${exam.category} room-${exam.room} ${todayClass} ${completedClass}" data-date="${exam.date}" data-category="${exam.category}" data-completed="${isPast}">
+                    <div class="card-header">
+                        <div class="card-date">${exam.day}</div>
+                        <div class="card-time">${exam.time}</div>
+                    </div>
+                    <div class="card-subject">${exam.subject}</div>
+                    <div class="card-details">
+                        <div class="card-detail-row">
+                            <span class="detail-label">Exam:</span>
+                            <span class="detail-value">${exam.exam}</span>
+                        </div>
+                        <div class="card-detail-row">
+                            <span class="detail-label">Room:</span>
+                            <span class="detail-value">${exam.room}</span>
+                        </div>
+                        <div class="card-detail-row">
+                            <span class="detail-label">Seat:</span>
+                            <span class="detail-value">${exam.seat}</span>
+                        </div>
+                        <div class="card-detail-row">
+                            <span class="detail-label">Duration:</span>
+                            <span class="detail-value">${exam.duration}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Populate exam cards
+        function populateExams() {
+            const mayContainer = document.getElementById('may-exams');
+            const juneContainer = document.getElementById('june-exams');
+            
+            mayContainer.innerHTML = '';
+            juneContainer.innerHTML = '';
+            
+            examData.forEach(exam => {
+                const card = createExamCard(exam);
+                if (exam.date.includes('-05-')) {
+                    mayContainer.innerHTML += card;
+                } else if (exam.date.includes('-06-')) {
+                    juneContainer.innerHTML += card;
+                }
+            });
+            
+            updateCounters();
+        }
+        
+        // Call initially
+        populateExams();
+        
+        // Function to filter exams
+        function filterExams(category) {
+            // Update active button
+            document.querySelectorAll('.filter-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show all exams first
+            document.querySelectorAll('.exam-card').forEach(card => {
+                card.style.display = '';
+            });
+            
+            // Then hide non-matching cards if not "all"
+            if (category !== 'all') {
+                document.querySelectorAll(`.exam-card:not(.${category})`).forEach(card => {
+                    card.style.display = 'none';
+                });
+            }
+        }
+        
+        // Function to update completed and upcoming exam counters
+        function updateCounters() {
+            const completedExams = document.querySelectorAll('.exam-card.completed').length;
+            const upcomingExams = document.querySelectorAll('.exam-card:not(.completed)').length;
+            
+            document.getElementById('completed-count').textContent = completedExams;
+            document.getElementById('upcoming-count').textContent = upcomingExams;
+        }
+        
+        // Function to toggle visibility of completed exams
+        document.getElementById('toggle-completed-btn').addEventListener('click', function() {
+            const completedExams = document.querySelectorAll('.exam-card.completed');
+            let isHidden = false;
+            
+            // Check if completed exams are currently hidden
+            if (completedExams.length > 0) {
+                isHidden = completedExams[0].style.display === 'none';
+            }
+            
+            // Toggle visibility
+            completedExams.forEach(card => {
+                card.style.display = isHidden ? '' : 'none';
+            });
+            
+            // Update button text
+            this.textContent = isHidden ? 'Hide Completed Exams' : 'Show Completed Exams';
+        });
+        
+        // Function to update countdown
+        function updateCountdown() {
+            const now = currentDate; // Use our defined current date
+            let nextExam = null;
+            let smallestDiff = Infinity;
+            let completedCount = 0;
+            
+            examData.forEach(exam => {
+                const examDate = new Date(exam.date);
+                if (examDate > now) {
+                    const diff = examDate - now;
+                    if (diff < smallestDiff) {
+                        smallestDiff = diff;
+                        nextExam = {
+                            date: examDate,
+                            subject: exam.subject,
+                            exam: exam.exam
+                        };
+                    }
+                } else {
+                    completedCount++;
+                }
+            });
+            
+            const countdownElement = document.getElementById('countdown');
+            
+            if (nextExam) {
+                const days = Math.floor(smallestDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((smallestDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((smallestDiff % (1000 * 60 * 60)) / (1000 * 60));
+                
+                countdownElement.innerHTML = `Next exam: <strong>${nextExam.subject}</strong><br>${nextExam.exam}: ${days}d ${hours}h ${minutes}m`;
+            } else {
+                countdownElement.innerHTML = 'All exams completed!';
+            }
+            
+            // Update progress
+            document.getElementById('completed-count').textContent = completedCount;
+            document.getElementById('upcoming-count').textContent = examData.length - completedCount;
+        }
+        
+        // Initialize countdown
+        updateCountdown();
+        
+        // Update countdown every minute
+        setInterval(updateCountdown, 60000);
+    </script>
+</body>
+</html>
